@@ -1,13 +1,48 @@
-# Logs
-logs
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+bin/
+obj/
+node_modules/
+packages/
+.vs/
+.vscode/
+.idea/
+*.dat
+*.njsproj
+*.sln
+coverage/
+bundle/
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
 *.log
-npm-debug.log*
+*.sqlite
 
-# Compiled bundle
-bundle
-
-# Dependency directory
-node_modules
-
-# Optional npm cache directory
-.npm
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
