@@ -27,9 +27,7 @@ describe('Main', () => {
     it('should calculate linearScale by start/end value and width', () => {
         _.range(0, 100, 10).forEach((label, ind) => {
             const gaugeLabels = mount(
-                <Gauge
-                    size={{ width: 10, height: 5 }}
-                />)
+                <Gauge />)
                 .render()
                 .find('.axis')
                 .find('text');

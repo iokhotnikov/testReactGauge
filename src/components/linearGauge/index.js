@@ -1,13 +1,15 @@
-import React, { PropTypes } from 'react';
 import _ from 'lodash';
+import React, { PropTypes } from 'react';
 import { scaleLinear } from 'd3-scale';
 
 import ValueIndicator from './valueIndicator';
 import Axis from '../axis';
 
-const Gauge = (props) => {
+const Gauge = (customProps) => {
+    const props = _.merge({}, Gauge.defaultProps, customProps);
     const domainPadding = props.size.width / 10;
-    const startValue = props.scale.startValue || _.min(props.scale.customTicks);
+    const startValue = props.scale.customTicks.length > 0 ?
+        _.min(props.scale.customTicks) : props.scale.startValue;
     let linearScale = scaleLinear().range([domainPadding, props.size.width - domainPadding]);
     let ticks;
     if (props.scale.customTicks && props.scale.customTicks.length > 0) {
@@ -20,6 +22,7 @@ const Gauge = (props) => {
         linearScale = linearScale.domain([props.scale.startValue, props.scale.endValue]);
         ticks = linearScale.ticks();
     }
+
     return (
         <svg width={props.size.width} height={props.size.height}>
             <ValueIndicator
@@ -30,14 +33,12 @@ const Gauge = (props) => {
                 linearScale={linearScale}
             />
             <Axis
-                y={props.rangeContainer.axisOffset}
                 height={props.size.height}
-                tickColor={props.tickColor}
-                tickWidth={props.tickWidth}
                 customTicks={ticks}
-                labelOffset={props.rangeContainer.labelOffset}
                 linearScale={linearScale}
-                backgroundColor={props.backgroundColor}
+                scale={props.scale}
+                rangeContainer={props.rangeContainer}
+                tick={props.scale.tick}
             />
         </svg>
     );
@@ -48,39 +49,54 @@ Gauge.propTypes = {
         width: PropTypes.number,
         height: PropTypes.number
     }),
-    tickColor: PropTypes.string,
-    tickWidth: PropTypes.number,
     scale: PropTypes.shape({
         customTicks: PropTypes.arrayOf(PropTypes.number),
         startValue: PropTypes.number,
-        endValue: PropTypes.number
+        endValue: PropTypes.number,
+        tick: PropTypes.shape({
+            color: PropTypes.string,
+            width: PropTypes.number
+        })
     }),
     value: PropTypes.number,
-    rangeContainer: PropTypes.object,
-    valueIndicator: PropTypes.shape({
-        color: PropTypes.string
+    rangeContainer: PropTypes.shape({
+        backgroundColor: PropTypes.string,
+        valueIndicatorOffset: PropTypes.number,
+        axisOffset: PropTypes.number,
+        labelOffset: PropTypes.number
     }),
-    backgroundColor: PropTypes.string
+    valueIndicator: PropTypes.shape({
+        color: PropTypes.string,
+        stroke: PropTypes.string,
+        strokeWidth: PropTypes.number
+    })
 };
 
 Gauge.defaultProps = {
-    tickColor: 'white',
-    tickWidth: 2,
-    backgroundColor: 'gray',
     scale: {
         startValue: 0,
         endValue: 100,
-        customTicks: []
+        customTicks: [],
+        tick: {
+            color: 'white',
+            width: 2
+        }
     },
     size: {
         width: 500,
         height: 500
     },
-    value: 50,
+    value: 0,
     rangeContainer: {
         valueIndicatorOffset: 5,
         axisOffset: 0,
-        labelOffset: 30
+        labelOffset: 30,
+        backgroundColor: 'gray'
+    },
+    valueIndicator: {
+        color: '#C2C2C2',
+        stroke: '#C2C2C2',
+        strokeWidth: 0
     }
 };
 

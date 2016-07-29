@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { getDAttribute } from './helper';
+
 import _ from 'lodash';
 
 import Label from '../label';
@@ -7,28 +8,32 @@ import Label from '../label';
 const Axis = (props) => {
     const scale = props.linearScale;
     const customTicks = props.customTicks;
+    const startValue = _.min(props.scale.customTicks) || props.scale.startValue;
+    const endValue = _.max(props.scale.customTicks) || props.scale.endValue;
     const axisTicks = customTicks.map((item, index) =>
         <path
             key={index}
-            d={getDAttribute(scale(item), props.y)}
-            stroke={props.tickColor}
-            strokeWidth={props.tickWidth}
+            d={getDAttribute(scale(item), props.rangeContainer.axisOffset)}
+            stroke={props.tick.color}
+            strokeWidth={props.tick.width}
         />
     );
 
     const labels = customTicks.map((item, index) =>
         <Label
-            key={index} x={scale(item)}
-            value={Math.round(item * 100) / 100} y={props.labelOffset}
+            key={index}
+            x={scale(item)}
+            value={Math.round(item * 100) / 100}
+            y={props.rangeContainer.labelOffset}
         />
     );
     const RangeContainer = () =>
         <rect
-            x={scale(_.min(props.customTicks))}
-            y={props.y}
+            x={scale(startValue)}
+            y={props.rangeContainer.axisOffset}
             height={5}
-            width={scale(customTicks[customTicks.length - 1]) - scale(customTicks[0])}
-            fill={props.backgroundColor}
+            width={scale(endValue) - scale(startValue)}
+            fill={props.rangeContainer.backgroundColor}
         />;
 
     return (
@@ -43,18 +48,9 @@ const Axis = (props) => {
 Axis.propTypes = {
     customTicks: PropTypes.arrayOf(React.PropTypes.number),
     linearScale: PropTypes.func.isRequired,
-    y: PropTypes.number,
-    labelOffset: PropTypes.number,
-    backgroundColor: PropTypes.string,
-    tickColor: PropTypes.string,
-    tickWidth: PropTypes.number,
-    startTick: PropTypes.number
-};
-
-Axis.defaultProps = {
-    customTicks: [],
-    y: 0,
-    labelOffset: 25
+    rangeContainer: PropTypes.object,
+    tick: PropTypes.object,
+    scale: PropTypes.object
 };
 
 export default Axis;

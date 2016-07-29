@@ -1,7 +1,6 @@
 import React from 'react';
 
 const ValueIndicator = (props) => {
-    const defaultProps = ValueIndicator.defaultProps;
     const width = props.linearScale(props.value) - props.x;
     const height = props.height;
 
@@ -11,9 +10,9 @@ const ValueIndicator = (props) => {
             y={props.y}
             width={width}
             height={height}
-            fill={props.style.color || defaultProps.style.color}
-            stroke={props.style.stroke || defaultProps.style.stroke}
-            strokeWidth={props.style.strokeWidth || defaultProps.style.strokeWidth}
+            fill={props.style.color}
+            stroke={props.style.stroke}
+            strokeWidth={props.style.strokeWidth}
             className="valueIndicator"
         />);
 };
@@ -31,12 +30,7 @@ ValueIndicator.defaultProps = {
     value: 0,
     x: 0,
     y: 0,
-    height: 10,
-    style: {
-        color: '#C2C2C2',
-        stroke: '#C2C2C2',
-        strokeWidth: 0
-    }
+    height: 10
 };
 
 export default ValueIndicator;
