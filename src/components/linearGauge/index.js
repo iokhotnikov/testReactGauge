@@ -24,7 +24,7 @@ const Gauge = (customProps) => {
     }
 
     return (
-        <svg width={props.size.width} height={props.size.height}>
+        <svg width={props.size.width} height={props.size.height} className="dx-react-gauge">
             <ValueIndicator
                 x={linearScale(startValue)}
                 y={props.rangeContainer.valueIndicatorOffset}

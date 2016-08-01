@@ -24,6 +24,10 @@ describe('Main', () => {
         expect(wrapper.find('svg')).to.have.length(1);
     });
 
+    it('should return valid className', () => {
+        expect(wrapper.find('svg').attr('class')).to.be.equal('dx-react-gauge');
+    });
+
     it('should calculate linearScale by start/end value and width', () => {
         _.range(0, 100, 10).forEach((label, ind) => {
             const gaugeLabels = mount(
@@ -122,8 +126,8 @@ describe('valueIndicator', () => {
     });
 
     it('should have rect start point', () => {
-        expect(wrappedValueIndicator.eq(0).attr('x')).to.be.equal('50');
-        expect(wrappedValueIndicator.eq(0).attr('y')).to.be.equal('5');
+        expect(wrappedValueIndicator.eq(0).attr('x')).to.be.equal('0');
+        expect(wrappedValueIndicator.eq(0).attr('y')).to.be.equal('0');
     });
 
     it('should have selected valueIndicator color', () => {
@@ -136,5 +140,12 @@ describe('valueIndicator', () => {
 
     it('should have selected valueIndicator stroke-width', () => {
         expect(wrappedValueIndicator.eq(0).attr('stroke-width')).to.be.equal('1');
+    });
+});
+
+describe('animation', () => {
+    it('should have transform property for valueIndicatorGroup', () => {
+        const wrappedGroup = wrappedGauge.find('.valueIndicatorGroup').eq(0);
+        expect(wrappedGroup.eq(0).attr('transform')).to.be.equal('translate(50, 5)');
     });
 });

@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: [
@@ -16,11 +17,16 @@ module.exports = {
                 test: /\.js?$/,
                 loaders: ['react-hot', 'babel'],
                 include: [path.join(__dirname, 'src'), path.join(__dirname, 'demo')]
+            },
+            {
+                test: /\.css$/,
+                loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
             }
         ]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin('bundle.css')
     ],
     devServer: {
         hot: true,

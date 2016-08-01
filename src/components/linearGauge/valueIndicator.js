@@ -1,20 +1,24 @@
 import React from 'react';
+import './styles.css';
 
 const ValueIndicator = (props) => {
     const width = props.linearScale(props.value) - props.x;
     const height = props.height;
 
     return (
-        <rect
-            x={props.x}
-            y={props.y}
-            width={width}
-            height={height}
-            fill={props.style.color}
-            stroke={props.style.stroke}
-            strokeWidth={props.style.strokeWidth}
-            className="valueIndicator"
-        />);
+        <g className="valueIndicatorGroup" transform={`translate(${props.x}, ${props.y})`}>
+            <rect
+                x={0}
+                y={0}
+                width={width}
+                height={height}
+                fill={props.style.color}
+                stroke={props.style.stroke}
+                strokeWidth={props.style.strokeWidth}
+                className="valueIndicator"
+            />
+        </g>
+    );
 };
 
 ValueIndicator.propTypes = {
