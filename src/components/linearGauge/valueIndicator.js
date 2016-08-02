@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import './styles.css';
 
 const ValueIndicator = (props) => {
@@ -36,5 +37,32 @@ ValueIndicator.defaultProps = {
     y: 0,
     height: 10
 };
+
+ValueIndicator.createSubvalueIndicator = (children, scale, parentProps) =>
+    React.Children.toArray(parentProps.children).map(
+        (child, index) => {
+            if (child.props.customize) {
+                const childProps =
+                    _.omit(
+                        _.merge({},
+                            child.props,
+                            child.props.customize(
+                                {
+                                    x: scale(parentProps.value),
+                                    y: parentProps.rangeContainer.valueIndicatorOffset
+                                },
+                                parentProps,
+                                child.props
+                            )
+                        ), 'propsTransform'
+                    );
+                return (
+                    <child.type
+                        key={child.props.key + index}
+                        {...childProps}
+                    >{child.props.children}</child.type>);
+            }
+            return child;
+        });
 
 export default ValueIndicator;

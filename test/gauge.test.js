@@ -149,3 +149,98 @@ describe('animation', () => {
         expect(wrappedGroup.eq(0).attr('transform')).to.be.equal('translate(50, 5)');
     });
 });
+
+describe('custom value indicator', () => {
+    describe('circle', () => {
+        const gaugeWithCircle = mount(
+            <Gauge scale={{ customTicks: [1, 2, 3] }} value={2} >
+                <circle cx="0" cy="0" fill="red" r={3} className="valueIndicator" />
+            </Gauge>
+        ).render();
+
+        it('should have circle in group valueIndicator', () => {
+            expect(gaugeWithCircle.find('.valueIndicator').get(0).parent.tagName)
+                .to.be.equal('g');
+            expect(gaugeWithCircle.find('.valueIndicator').get(0).tagName)
+                .to.be.equal('circle');
+        });
+        it('should have correct group transform and circle center point', () => {
+            expect(
+                gaugeWithCircle
+                    .find('.valueIndicator')
+                    .parent('g')
+                    .eq(0)
+                    .attr('transform')
+            ).to.be.equal('translate(250, 5)');
+            expect(gaugeWithCircle.find('.valueIndicator').eq(0)
+                .attr('cx')).to.be.equal('0');
+            expect(gaugeWithCircle.find('.valueIndicator').eq(0)
+                .attr('cy')).to.be.equal('0');
+            expect(gaugeWithCircle.find('.valueIndicator').eq(0)
+                .attr('fill')).to.be.equal('red');
+            expect(gaugeWithCircle.find('.valueIndicator').eq(0)
+                .attr('r')).to.be.equal('3');
+        });
+    });
+    describe('rect', () => {
+        const gauge = mount(
+            <Gauge
+                scale={{ customTicks: [1, 2, 3] }}
+                value={2.5}
+                size={{ width: 350, height: 100 }}
+            >
+                <rect
+                    x="-50"
+                    y="-10"
+                    fill="red"
+                    width={100}
+                    height={10}
+                    className="valueIndicator"
+                />
+            </Gauge>
+        ).render();
+
+        it('should have rect valueIndicator', () => {
+            expect(gauge.find('.valueIndicator').get(0).tagName).to.be.equal('rect');
+        });
+        it('valueIndicator should have centerPoint by value', () => {
+            expect(gauge.find('.valueIndicator').eq(0).attr('x')).to.be.equal('-50');
+            expect(gauge.find('.valueIndicator').eq(0).attr('y')).to.be.equal('-10');
+        });
+    });
+    describe('polygon with customize function', () => {
+        const gauge = mount(
+            <Gauge scale={{ customTicks: [1, 2, 3] }} value={2} size={{ width: 350, height: 100 }}>
+                <polygon
+                    fill="red"
+                    points="100 50 150 100 200 50"
+                    className="valueIndicator"
+                    customize={(valueCoords, parentProps, thisProps) => {
+                        const points = thisProps.points.split(' ').reduce((prev, cur, index) => {
+                            if (index % 2 === 0) {
+                                prev.push([cur]);
+                            } else {
+                                prev[prev.length - 1].push(cur);
+                            }
+                            return prev;
+                        }, []);
+                        const shiftedPoints = points.reduce((prev, cur) => {
+                            const x = parseInt(cur[0], 10) + (valueCoords.x * 0.1);
+                            const y = parseInt(cur[1], 10) + (valueCoords.y * 0.1);
+                            return `${prev}${x} ${y} `;
+                        }, '');
+                        return { points: shiftedPoints.trim() };
+                    }}
+                />
+            </Gauge>
+        ).render();
+
+        it('should have polygon valueIndicator', () => {
+            expect(gauge.find('.valueIndicator').get(0).tagName).to.be.equal('polygon');
+        });
+        it('valueIndicator should have centerPoint by value', () => {
+            expect(gauge.find('.valueIndicator').eq(0).attr('points'))
+                .to.be.equal('117.5 50.5 167.5 100.5 217.5 50.5');
+        });
+    });
+});

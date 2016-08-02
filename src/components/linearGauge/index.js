@@ -22,16 +22,33 @@ const Gauge = (customProps) => {
         linearScale = linearScale.domain([props.scale.startValue, props.scale.endValue]);
         ticks = linearScale.ticks();
     }
-
+    if (!customProps.children) {
+        return (
+            <svg width={props.size.width} height={props.size.height}>
+                <ValueIndicator
+                    x={linearScale(startValue)}
+                    y={props.rangeContainer.valueIndicatorOffset}
+                    value={props.value}
+                    style={props.valueIndicator}
+                    linearScale={linearScale}
+                />
+                <Axis
+                    height={props.size.height}
+                    customTicks={ticks}
+                    linearScale={linearScale}
+                    scale={props.scale}
+                    rangeContainer={props.rangeContainer}
+                    tick={props.scale.tick}
+                />
+            </svg>
+        );
+    }
+    let subValueIndicator =
+        ValueIndicator.createSubvalueIndicator(props.children, linearScale, props);
+    const valueX = linearScale(props.value);
+    const valueY = props.rangeContainer.valueIndicatorOffset;
     return (
         <svg width={props.size.width} height={props.size.height} className="dx-react-gauge">
-            <ValueIndicator
-                x={linearScale(startValue)}
-                y={props.rangeContainer.valueIndicatorOffset}
-                value={props.value}
-                style={props.valueIndicator}
-                linearScale={linearScale}
-            />
             <Axis
                 height={props.size.height}
                 customTicks={ticks}
@@ -40,6 +57,9 @@ const Gauge = (customProps) => {
                 rangeContainer={props.rangeContainer}
                 tick={props.scale.tick}
             />
+            <g transform={`translate(${valueX}, ${valueY})`} >
+                {subValueIndicator}
+            </g>
         </svg>
     );
 };
@@ -69,7 +89,11 @@ Gauge.propTypes = {
         color: PropTypes.string,
         stroke: PropTypes.string,
         strokeWidth: PropTypes.number
-    })
+    }),
+    children: React.PropTypes.oneOfType([
+        PropTypes.arrayOf(React.PropTypes.node),
+        PropTypes.node
+    ])
 };
 
 Gauge.defaultProps = {
