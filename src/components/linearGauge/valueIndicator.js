@@ -54,7 +54,7 @@ ValueIndicator.createSubvalueIndicator = (children, scale, parentProps) =>
                                 parentProps,
                                 child.props
                             )
-                        ), 'propsTransform'
+                        ), 'customize'
                     );
                 return (
                     <child.type
