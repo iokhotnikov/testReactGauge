@@ -5,6 +5,19 @@ import { scaleLinear } from 'd3-scale';
 import ValueIndicator from './valueIndicator';
 import Axis from '../axis';
 
+const getValueIndicator = (x, y, value, style, linearScale) => (
+    <ValueIndicator
+        x={x}
+        y={y}
+        value={value}
+        style={style}
+        linearScale={linearScale}
+    />);
+const getSubvalueIndicator = (x, y, parentProps, scale) =>
+    <g transform={`translate(${x}, ${y})`}>
+        {ValueIndicator.createSubvalueIndicator(parentProps.children, scale, parentProps)}
+    </g>;
+
 const Gauge = (customProps) => {
     const props = _.merge({}, Gauge.defaultProps, customProps);
     const domainPadding = props.size.width / 10;
@@ -22,31 +35,18 @@ const Gauge = (customProps) => {
         linearScale = linearScale.domain([props.scale.startValue, props.scale.endValue]);
         ticks = linearScale.ticks();
     }
-    if (!customProps.children) {
-        return (
-            <svg width={props.size.width} height={props.size.height}>
-                <ValueIndicator
-                    x={linearScale(startValue)}
-                    y={props.rangeContainer.valueIndicatorOffset}
-                    value={props.value}
-                    style={props.valueIndicator}
-                    linearScale={linearScale}
-                />
-                <Axis
-                    height={props.size.height}
-                    customTicks={ticks}
-                    linearScale={linearScale}
-                    scale={props.scale}
-                    rangeContainer={props.rangeContainer}
-                    tick={props.scale.tick}
-                />
-            </svg>
-        );
-    }
-    let subValueIndicator =
-        ValueIndicator.createSubvalueIndicator(props.children, linearScale, props);
-    const valueX = linearScale(props.value);
-    const valueY = props.rangeContainer.valueIndicatorOffset;
+    let valueIndicator = !customProps.children
+        ? getValueIndicator(
+            linearScale(startValue),
+            props.rangeContainer.valueIndicatorOffset,
+            props.value,
+            props.valueIndicator,
+            linearScale)
+        : getSubvalueIndicator(
+            linearScale(props.value),
+            props.rangeContainer.valueIndicatorOffset,
+            props,
+            linearScale);
     return (
         <svg width={props.size.width} height={props.size.height} className="dx-react-gauge">
             <Axis
@@ -57,9 +57,7 @@ const Gauge = (customProps) => {
                 rangeContainer={props.rangeContainer}
                 tick={props.scale.tick}
             />
-            <g transform={`translate(${valueX}, ${valueY})`} >
-                {subValueIndicator}
-            </g>
+            {valueIndicator}
         </svg>
     );
 };
