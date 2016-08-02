@@ -1,26 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Gauge } from '../src';
-import _ from 'lodash';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import App from './containers/App';
 
-class GaugeContainer extends React.Component {
-    constructor() {
-        super();
-        this.state = { value: 42 };
-    }
+const store = createStore(() => {});
 
-    componentDidMount() {
-        this.timer = setInterval(() => { this.setState({ value: _.random(0, 100) }); }, 2000);
-    }
-
-    render() {
-        return <Gauge value={this.state.value} />;
-    }
-}
-
-
-
-ReactDOM.render(
-    <GaugeContainer />,
+render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
     document.getElementById('root')
 );
