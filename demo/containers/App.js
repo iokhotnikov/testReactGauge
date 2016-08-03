@@ -1,7 +1,8 @@
+import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Gauge } from '../../src';
-import _ from 'lodash';
+import DXLinearGauge from '../components/dxLinearGauge';
 import './styles.css';
 
 class App extends React.Component {
@@ -17,12 +18,6 @@ class App extends React.Component {
         this.timer = setInterval(() => { this.setState({ value: _.random(0, 100) }); }, 2000);
     }
 
-    getDxGauge() {
-        return (
-            <Gauge key={0} value={this.state.value} />
-        );
-    }
-
     changeView(index) {
         this.setState({
             selectedViewIndex: index
@@ -31,8 +26,8 @@ class App extends React.Component {
 
     render() {
         const views = [
-            this.getDxGauge(),
-            <p key={1}>Coming Soon...</p>,
+            <Gauge key={0} value={this.state.value} />,
+            <DXLinearGauge key={1} value={this.state.value} />,
             <p key={2}>Coming Soon...</p>
         ];
 
@@ -52,4 +47,3 @@ class App extends React.Component {
 }
 
 export default connect()(App);
-
