@@ -1,10 +1,10 @@
 @keyframes appear
 {
-    0%
+    from
     {
         transform: scale(0, 1);
     }
-    100%
+    to
     {
         transform: scale(1, 1);
     }
@@ -21,15 +21,13 @@
     from {
         transform: translateX(0);
     }
-    to {
-        transform: translateX(100);
-    }
 }
 
 .dx-react-gauge .subValueIndicatorGroup
 {
     animation: moveSubvalue 1s ease;
     transition: all 1s ease;
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
+}
+.dx-react-gauge .subValueIndicator{
+    transition: all 1s ease;
 }

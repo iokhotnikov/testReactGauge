@@ -10,7 +10,7 @@ const wrappedGauge = mount(
         scale={{ customTicks: [1, 2, 3] }}
         value={2}
         valueIndicator={{
-            color: 'green',
+            fill: 'green',
             stroke: 'red',
             strokeWidth: 1
         }}
@@ -29,13 +29,11 @@ describe('Main', () => {
     });
 
     it('should calculate linearScale by start/end value and width', () => {
-        _.range(0, 100, 10).forEach((label, ind) => {
-            const gaugeLabels = mount(
-                <Gauge />)
+        const gaugeLabels = mount(<Gauge />)
                 .render()
                 .find('.axis')
                 .find('text');
-
+        _.range(0, 100, 10).forEach((label, ind) => {
             expect(gaugeLabels.eq(ind).text()).to.be.equal(label.toString());
         });
     });
@@ -157,9 +155,8 @@ describe('animation', () => {
 
 describe('subValueIndicator', () => {
     const subValueGaugeMarkup = (
-        <Gauge rangeContainer={{ subValueIndicatorOffset: 10 }}>
-            <circle className="subValueIndicator" value={10} />
-        </Gauge>);
+        <Gauge><circle className="subValueIndicator" value={10} /></Gauge>
+    );
     const subValueGauge = mount(subValueGaugeMarkup).render();
     const subValueStaticGauge = render(subValueGaugeMarkup);
     it('should have subValueIndicatorGroup with transform on x', () => {
@@ -167,10 +164,6 @@ describe('subValueIndicator', () => {
         expect(subValueIndicator.parent.tagName).to.be.equal('g');
         expect(subValueStaticGauge.find('.subValueIndicatorGroup')
             .attr('style')).to.be.equal('transform:translate(40px, 0px);');
-    });
-    it('should have subValueIndicatorGroup parent with transform on y', () => {
-        expect(subValueGauge.find('.subValueIndicatorGroup').parent().attr('transform'))
-            .to.be.equal('translate(0, 10)');
     });
 
     describe('circle', () => {
@@ -209,43 +202,6 @@ describe('subValueIndicator', () => {
             expect(indicator.attr('fill')).to.be.equal('red');
             expect(indicator.attr('width')).to.be.equal('100');
             expect(indicator.attr('height')).to.be.equal('10');
-        });
-    });
-
-    describe('with customize function', () => {
-        const customShiftPoints = (coodr, valueCoords, index) => {
-            if (index % 2 === 0) {
-                return (parseInt(coodr, 10) + (valueCoords.x * 0.1));
-            }
-            return coodr;
-        };
-        const customize = (valueXY, parentProps, thisProps) => {
-            const points =
-                thisProps.points
-                            .split(' ')
-                            .map((coord, index) => customShiftPoints(coord, valueXY, index))
-                        .reduce((prev, cur) => `${prev}${cur} `, '')
-                        .trim();
-            return { points };
-        };
-        const gauge = mount(
-            <Gauge
-                scale={{ customTicks: [1, 2, 3] }}
-                value={2}
-                size={{ width: 350, height: 100 }}
-                valueIndicator={{ on: false }}
-            >
-                <polygon
-                    points="100 50 150 100 200 50"
-                    className="subValueIndicator"
-                    customize={customize}
-                />
-            </Gauge>
-        ).render();
-        it('should have same tag with customize attributes', () => {
-            const subValueIndicator = gauge.find('.subValueIndicator').eq(0);
-            expect(gauge.find('.subValueIndicator').get(0).tagName).to.be.equal('polygon');
-            expect(subValueIndicator.attr('points')).to.be.equal('114 50 164 100 214 50');
         });
     });
 
