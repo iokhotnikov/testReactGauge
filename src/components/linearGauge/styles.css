@@ -9,9 +9,25 @@
         transform: scale(1, 1);
     }
 }
+@keyframes moveSubvalue
+{
+    0%
+    {
+        transform: translateX(0);
+    }
+    100%
+    {
+        transform: translateX(100);
+    }
+}
 
 .dx-react-gauge .valueIndicator
 {
     animation: appear 1s ease;
     transition: width 1s;
+}
+.dx-react-gauge .subValueIndicatorGroup
+{
+    animation: moveSubvalue 10s ease;
+    transition: transform 1s;
 }

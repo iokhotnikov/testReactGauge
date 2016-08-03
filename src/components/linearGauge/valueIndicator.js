@@ -11,7 +11,7 @@ const ValueIndicator = (props) => {
             <rect
                 x={0}
                 y={0}
-                width={width}
+                width={width > 0 ? width : 0}
                 height={height}
                 fill={props.style.color}
                 stroke={props.style.stroke}
@@ -38,31 +38,27 @@ ValueIndicator.defaultProps = {
     height: 10
 };
 
-ValueIndicator.createSubvalueIndicator = (children, scale, parentProps) =>
-    React.Children.toArray(parentProps.children).map(
-        (child, index) => {
-            if (child.props.customize) {
-                const childProps =
-                    _.omit(
-                        _.merge({},
-                            child.props,
-                            child.props.customize(
-                                {
-                                    x: scale(parentProps.value),
-                                    y: parentProps.rangeContainer.valueIndicatorOffset
-                                },
-                                parentProps,
-                                child.props
-                            )
-                        ), 'customize'
-                    );
-                return (
-                    <child.type
-                        key={child.props.key + index}
-                        {...childProps}
-                    >{child.props.children}</child.type>);
-            }
-            return child;
-        });
-
+ValueIndicator.createSubvalueIndicator = (child, scale, parentProps) => {
+    if (child.props.customize) {
+        const childProps =
+            _.omit(
+                _.merge({},
+                    child.props,
+                    child.props.customize(
+                        {
+                            x: scale(parentProps.value),
+                            y: parentProps.rangeContainer.valueIndicatorOffset
+                        },
+                        parentProps,
+                        child.props
+                    )
+                ), 'customize'
+            );
+        return (
+            <child.type
+                {...childProps}
+            >{child.props.children}</child.type>);
+    }
+    return child;
+};
 export default ValueIndicator;
