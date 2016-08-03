@@ -1,10 +1,10 @@
 @keyframes appear
 {
-    0%
+    from
     {
         transform: scale(0, 1);
     }
-    100%
+    to
     {
         transform: scale(1, 1);
     }
@@ -14,4 +14,20 @@
 {
     animation: appear 1s ease;
     transition: width 1s;
+}
+
+@keyframes moveSubvalue
+{
+    from {
+        transform: translateX(0);
+    }
+}
+
+.dx-react-gauge .subValueIndicatorGroup
+{
+    animation: moveSubvalue 1s ease;
+    transition: all 1s ease;
+}
+.dx-react-gauge .subValueIndicator{
+    transition: all 1s ease;
 }
