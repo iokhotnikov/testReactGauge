@@ -9,6 +9,13 @@
         transform: scale(1, 1);
     }
 }
+
+.dx-react-gauge .valueIndicator
+{
+    animation: appear 1s ease;
+    transition: width 1s;
+}
+
 @keyframes moveSubvalue
 {
     from {
@@ -19,11 +26,6 @@
     }
 }
 
-.dx-react-gauge .valueIndicator
-{
-    animation: appear 1s ease;
-    transition: width 1s;
-}
 .dx-react-gauge .subValueIndicatorGroup
 {
     animation: moveSubvalue 1s ease;
