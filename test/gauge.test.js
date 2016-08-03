@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { mount, render } from 'enzyme';
 import _ from 'lodash';
 
 import { Gauge } from '../src';
@@ -156,24 +156,46 @@ describe('animation', () => {
 });
 
 describe('subValueIndicator', () => {
+    const subValueGauge = mount(
+        <Gauge rangeContainer={{ subValueIndicatorOffset: 10 }}>
+            <circle className="subValueIndicator" />
+        </Gauge>
+    ).render();
+    const subValueStaticGauge = render(
+        <Gauge rangeContainer={{ subValueIndicatorOffset: 10 }}>
+            <circle className="subValueIndicator" value={10} />
+        </Gauge>
+    );
+    it('should have subValueIndicatorGroup', () => {
+        const subValueIndicator = subValueGauge.find('.subValueIndicatorGroup').get(0);
+        expect(subValueIndicator.parent.tagName).to.be.equal('g');
+    });
+    it('should have subValueIndicatorGroup with transform on x', () => {
+        expect(subValueStaticGauge.find('.subValueIndicatorGroup').attr('style'))
+            .to.be.equal('transform:translate(40px, 0px);');
+    });
+    it('should have subValueIndicatorGroup parent with transform on y', () => {
+        expect(subValueGauge.find('.subValueIndicatorGroup').parent().attr('transform'))
+            .to.be.equal('translate(0, 10)');
+    });
+
     describe('circle', () => {
         const gaugeWithCircle = mount(
             <Gauge>
                 <circle cx="0" cy="0" fill="red" r={3} className="subValueIndicator" />
             </Gauge>
         ).render();
-
         it('should have circle in group', () => {
-            const valueIndicator = gaugeWithCircle.find('.subValueIndicator').get(0);
-            expect(valueIndicator.parent.tagName).to.be.equal('g');
-            expect(valueIndicator.tagName).to.be.equal('circle');
+            const subValueIndicator = gaugeWithCircle.find('.subValueIndicator').get(0);
+            expect(subValueIndicator.parent.tagName).to.be.equal('g');
+            expect(subValueIndicator.tagName).to.be.equal('circle');
         });
         it('should have attributes from tag', () => {
-            const valueIndicator = gaugeWithCircle.find('.subValueIndicator').eq(0);
-            expect(valueIndicator.attr('cx')).to.be.equal('0');
-            expect(valueIndicator.attr('cy')).to.be.equal('0');
-            expect(valueIndicator.attr('fill')).to.be.equal('red');
-            expect(valueIndicator.attr('r')).to.be.equal('3');
+            const subValueIndicator = gaugeWithCircle.find('.subValueIndicator').eq(0);
+            expect(subValueIndicator.attr('cx')).to.be.equal('0');
+            expect(subValueIndicator.attr('cy')).to.be.equal('0');
+            expect(subValueIndicator.attr('fill')).to.be.equal('red');
+            expect(subValueIndicator.attr('r')).to.be.equal('3');
         });
     });
 

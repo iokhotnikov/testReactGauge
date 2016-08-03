@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import { scaleLinear } from 'd3-scale';
 
-import ValueIndicator from './valueIndicator';
+import ValueIndicator from '../valueIndicator';
 import Axis from '../axis';
 
 const getValueIndicator = (x, y, value, style, linearScale) => (
@@ -13,34 +13,7 @@ const getValueIndicator = (x, y, value, style, linearScale) => (
         style={style}
         linearScale={linearScale}
     />);
-const getSubvalueIndicators = (x, y, parentProps, scale) =>
-    React.Children.toArray(parentProps.children).map(
-        (child, index) => {
-            const subValueX = child.props.value
-                ? scale(child.props.value)
-                : x;
-            return (
-                <g
-                    key={index}
-                    style={{ transform: `translate(${subValueX}px, ${y}px)` }}
-                    className="subValueIndicatorGroup"
-                >
-                    {ValueIndicator.createSubvalueIndicator(
-                        child,
-                        scale,
-                        parentProps,
-                        index
-                    )}
-                </g>
-            );
-        }
-    );
-
-const Gauge = (customProps) => {
-    const props = _.merge({}, Gauge.defaultProps, customProps);
-    const domainPadding = props.size.width / 10;
-    const startValue = props.scale.customTicks.length > 0 ?
-        _.min(props.scale.customTicks) : props.scale.startValue;
+const getScaleAndTicks = (props, domainPadding) => {
     let linearScale = scaleLinear().range([0, props.size.width - (domainPadding * 2)]);
     let ticks;
     if (props.scale.customTicks && props.scale.customTicks.length > 0) {
@@ -53,35 +26,45 @@ const Gauge = (customProps) => {
         linearScale = linearScale.domain([props.scale.startValue, props.scale.endValue]);
         ticks = linearScale.ticks();
     }
+    return { scale: linearScale, ticks };
+};
+
+const Gauge = (customProps) => {
+    const props = _.merge({}, Gauge.defaultProps, customProps);
+    const domainPadding = props.size.width / 10;
+    const startValue = props.scale.customTicks.length > 0 ?
+        _.min(props.scale.customTicks) : props.scale.startValue;
+    const scaleAndTicks = getScaleAndTicks(props, domainPadding);
     let valueIndicator = (props.valueIndicator && !props.valueIndicator.on)
         ? ''
         : getValueIndicator(
-            linearScale(startValue),
+            scaleAndTicks.scale(startValue),
             props.rangeContainer.valueIndicatorOffset,
             props.value,
             props.valueIndicator,
-            linearScale);
+            scaleAndTicks.scale);
     let subValueIndicators = !customProps.children
         ? ''
-        : getSubvalueIndicators(
-            linearScale(props.value),
+        : ValueIndicator.getSubvalueIndicators(
+            scaleAndTicks.scale(props.value),
             props.rangeContainer.valueIndicatorOffset,
             props,
-            linearScale);
-    const topPadding = props.rangeContainer.topPadding ? props.rangeContainer.topPadding : 0;
+            scaleAndTicks.scale);
     return (
         <svg width={props.size.width} height={props.size.height} className="dx-react-gauge">
-            <g transform={`translate(${domainPadding},${topPadding})`}>
+            <g transform={`translate(${domainPadding},${props.rangeContainer.topPadding})`}>
                 <Axis
                     height={props.size.height}
-                    customTicks={ticks}
-                    linearScale={linearScale}
+                    customTicks={scaleAndTicks.ticks}
+                    linearScale={scaleAndTicks.scale}
                     scale={props.scale}
                     rangeContainer={props.rangeContainer}
                     tick={props.scale.tick}
                 />
                 {valueIndicator}
-                {subValueIndicators}
+                <g transform={`translate(0, ${props.rangeContainer.subValueIndicatorOffset})`}>
+                    {subValueIndicators}
+                </g>
             </g>
         </svg>
     );
@@ -105,6 +88,7 @@ Gauge.propTypes = {
     rangeContainer: PropTypes.shape({
         backgroundColor: PropTypes.string,
         valueIndicatorOffset: PropTypes.number,
+        subValueIndicatorOffset: PropTypes.number,
         axisOffset: PropTypes.number,
         labelOffset: PropTypes.number,
         topPadding: PropTypes.number
@@ -138,6 +122,7 @@ Gauge.defaultProps = {
     value: 0,
     rangeContainer: {
         valueIndicatorOffset: 5,
+        subValueIndicatorOffset: 5,
         axisOffset: 0,
         labelOffset: 30,
         backgroundColor: 'gray',
