@@ -38,6 +38,7 @@ ValueIndicator.defaultProps = {
     y: 0,
     height: 10
 };
+
 const getCustomizeMarkup = (child, parentProps, valueXY) => {
     const childProps =
         _.omit(

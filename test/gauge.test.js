@@ -156,23 +156,17 @@ describe('animation', () => {
 });
 
 describe('subValueIndicator', () => {
-    const subValueGauge = mount(
-        <Gauge rangeContainer={{ subValueIndicatorOffset: 10 }}>
-            <circle className="subValueIndicator" />
-        </Gauge>
-    ).render();
-    const subValueStaticGauge = render(
+    const subValueGaugeMarkup = (
         <Gauge rangeContainer={{ subValueIndicatorOffset: 10 }}>
             <circle className="subValueIndicator" value={10} />
-        </Gauge>
-    );
-    it('should have subValueIndicatorGroup', () => {
+        </Gauge>);
+    const subValueGauge = mount(subValueGaugeMarkup).render();
+    const subValueStaticGauge = render(subValueGaugeMarkup);
+    it('should have subValueIndicatorGroup with transform on x', () => {
         const subValueIndicator = subValueGauge.find('.subValueIndicatorGroup').get(0);
         expect(subValueIndicator.parent.tagName).to.be.equal('g');
-    });
-    it('should have subValueIndicatorGroup with transform on x', () => {
-        expect(subValueStaticGauge.find('.subValueIndicatorGroup').attr('style'))
-            .to.be.equal('transform:translate(40px, 0px);');
+        expect(subValueStaticGauge.find('.subValueIndicatorGroup')
+            .attr('style')).to.be.equal('transform:translate(40px, 0px);');
     });
     it('should have subValueIndicatorGroup parent with transform on y', () => {
         expect(subValueGauge.find('.subValueIndicatorGroup').parent().attr('transform'))
@@ -181,17 +175,12 @@ describe('subValueIndicator', () => {
 
     describe('circle', () => {
         const gaugeWithCircle = mount(
-            <Gauge>
-                <circle cx="0" cy="0" fill="red" r={3} className="subValueIndicator" />
-            </Gauge>
+            <Gauge><circle cx="0" cy="0" fill="red" r={3} className="subValueIndicator" /></Gauge>
         ).render();
-        it('should have circle in group', () => {
-            const subValueIndicator = gaugeWithCircle.find('.subValueIndicator').get(0);
-            expect(subValueIndicator.parent.tagName).to.be.equal('g');
-            expect(subValueIndicator.tagName).to.be.equal('circle');
-        });
-        it('should have attributes from tag', () => {
+        it('should have circle in group with arguments', () => {
             const subValueIndicator = gaugeWithCircle.find('.subValueIndicator').eq(0);
+            expect(subValueIndicator.parent().get(0).tagName).to.be.equal('g');
+            expect(subValueIndicator.get(0).tagName).to.be.equal('circle');
             expect(subValueIndicator.attr('cx')).to.be.equal('0');
             expect(subValueIndicator.attr('cy')).to.be.equal('0');
             expect(subValueIndicator.attr('fill')).to.be.equal('red');
@@ -213,10 +202,8 @@ describe('subValueIndicator', () => {
             </Gauge>
         ).render();
         const indicator = gauge.find('.subValueIndicator').eq(0);
-        it('should have rect subValueIndicator', () => {
-            expect(gauge.find('.subValueIndicator').get(0).tagName).to.be.equal('rect');
-        });
-        it('should have attributes from tag', () => {
+        it('should have rect with expected attributes', () => {
+            expect(indicator.get(0).tagName).to.be.equal('rect');
             expect(indicator.attr('x')).to.be.equal('-50');
             expect(indicator.attr('y')).to.be.equal('-10');
             expect(indicator.attr('fill')).to.be.equal('red');
@@ -255,24 +242,20 @@ describe('subValueIndicator', () => {
                 />
             </Gauge>
         ).render();
-        it('should have same tag', () => {
+        it('should have same tag with customize attributes', () => {
+            const subValueIndicator = gauge.find('.subValueIndicator').eq(0);
             expect(gauge.find('.subValueIndicator').get(0).tagName).to.be.equal('polygon');
-        });
-        it('should have centerPoint by value', () => {
-            expect(gauge.find('.subValueIndicator').eq(0).attr('points'))
-                .to.be.equal('114 50 164 100 214 50');
+            expect(subValueIndicator.attr('points')).to.be.equal('114 50 164 100 214 50');
         });
     });
 
     describe('with valueIndicator', () => {
         const gauge = mount(
-            <Gauge>
-                <circle className="subValueIndicator" />
-            </Gauge>
+            <Gauge><circle className="subValueIndicator" /></Gauge>
         ).render();
         const subValueIndicator = gauge.find('.subValueIndicator').get(0);
         const valueIndicator = gauge.find('.valueIndicator').get(0);
-        it('should have circle subValueIndicator and rect valueIndicator', () => {
+        it('should have expected subValueIndicator and valueIndicator', () => {
             expect(subValueIndicator.tagName).to.be.equal('circle');
             expect(valueIndicator.tagName).to.be.equal('rect');
         });
@@ -286,7 +269,7 @@ describe('subValueIndicator', () => {
             </Gauge>
         ).render();
         const subvalueIndicators = gauge.find('.subValueIndicator');
-        it('should have multiple figures on gauge', () => {
+        it('should have multiple indicators on gauge', () => {
             expect(subvalueIndicators.get(0).tagName).to.be.equal('circle');
             expect(subvalueIndicators.get(1).tagName).to.be.equal('rect');
         });

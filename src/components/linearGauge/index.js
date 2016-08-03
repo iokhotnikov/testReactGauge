@@ -13,6 +13,7 @@ const getValueIndicator = (x, y, value, style, linearScale) => (
         style={style}
         linearScale={linearScale}
     />);
+
 const getScaleAndTicks = (props, domainPadding) => {
     let linearScale = scaleLinear().range([0, props.size.width - (domainPadding * 2)]);
     let ticks;
