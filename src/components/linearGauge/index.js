@@ -47,7 +47,7 @@ const Gauge = (customProps) => {
                     linearScale={scaleAndTicks.scale}
                 />
                 <g transform={`translate(0, ${props.rangeContainer.valueIndicatorOffset})`}>
-                    {React.Children.toArray(props.children).map((childTemplate, index) =>
+                    {React.Children.toArray(customProps.children).map((childTemplate, index) =>
                         <SubValueIndicator
                             key={index}
                             childTemplate={childTemplate}
