@@ -10,7 +10,7 @@
     "start": "webpack-dev-server",
     "eslint": "eslint src/ test/",
     "cover": "babel-node ./node_modules/istanbul/lib/cli cover node_modules/mocha/bin/_mocha -- --bail --recursive test/.setup.js test/**/*.test.js --require ignore-styles",
-	"check" : "npm run eslint & npm run cover"
+    "check": "npm run eslint & npm run cover"
   },
   "pre-commit": [
     "test",
@@ -55,11 +55,13 @@
   "dependencies": {
     "d3-scale": "^1.0.1",
     "devextreme": "^16.1.4",
+    "highcharts": "^4.2.6",
     "jquery": "^2.2.0",
     "jszip": "^2.6.1",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
     "react-redux": "^4.4.5",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "victory-chart": "^10.2.6"
   }
 }

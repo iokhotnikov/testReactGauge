@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 import { Gauge } from '../../src';
 import DXLinearGauge from '../components/dxLinearGauge';
 import './styles.css';
+import Chart from '../../src/components/chart/';
+import Highcharts from 'highcharts';
+import $ from 'jquery';
 
 class App extends React.Component {
     constructor(props) {
@@ -17,13 +20,44 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        this.timer = setInterval(() => {
-            this.setState({
-                value: _.random(0, 100),
-                subvalueStar: _.random(0, 100),
-                subvalueArrow: _.random(0, 100)
+        const self = this;
+        $.getJSON('http://localhost:8080/demo/testData.json',
+            data => {
+                self.setState({ data });
+
+                // highcharts, data process
+                const series = {};
+                Object.keys(data).map((key) =>
+                    Object.keys(data[key]).map((seriesKey) => {
+                        if (series[seriesKey] === undefined) {
+                            series[seriesKey] = [];
+                        }
+                        series[seriesKey].push({ x: new Date(key), y: data[key][seriesKey] });
+                        return 0;
+                    })
+                );
+                const resultData = Object.keys(series).map((seriesKey, index) => {
+                    const seriesData = series[seriesKey];
+                    return {
+                        name: seriesKey,
+                        data: seriesData,
+                        turboThreshold: 0,
+                        yAxis: index >= 1 ? 1 : index
+                    };
+                });
+                Highcharts.chart('highcharts-content', {
+                    series: resultData,
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    yAxis: [
+                        {
+                            opposite: true
+                        },
+                        {}
+                    ]
+                });
             });
-        }, 2000);
     }
 
     changeView(index) {
@@ -33,12 +67,12 @@ class App extends React.Component {
     }
 
     render() {
+        const width = window.innerWidth * 0.96;
         const views = [
-            <Gauge key={0} value={this.state.value} />,
+            <Chart key={0} data={this.state.data} width={width} />,
             <DXLinearGauge key={1} value={this.state.value} />,
             <Gauge
                 key={2}
-                value={this.state.value}
                 rangeContainer={{
                     topPadding: 15
                 }}
@@ -67,6 +101,8 @@ class App extends React.Component {
                 </div>
                 <div className="dx-example-content">
                     {views.filter((view, ind) => ind === this.state.selectedViewIndex)}
+                </div>
+                <div id="highcharts-content">
                 </div>
             </div>
         );
