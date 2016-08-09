@@ -8,17 +8,19 @@ import Axis from '../axis';
 const getScaleAndTicks = (props, domainPadding) => {
     let linearScale = scaleLinear().range([0, props.size.width - (domainPadding * 2)]);
     let ticks;
+    let minorTicks = [];
     if (props.scale.customTicks && props.scale.customTicks.length > 0) {
         linearScale = linearScale.domain([
             _.min(props.scale.customTicks),
             _.max(props.scale.customTicks)
         ]);
+        minorTicks = linearScale.ticks(props.scale.customTicks.length * 10);
         ticks = props.scale.customTicks;
     } else {
         linearScale = linearScale.domain([props.scale.startValue, props.scale.endValue]);
         ticks = linearScale.ticks();
     }
-    return { scale: linearScale, ticks };
+    return { scale: linearScale, ticks, minorTicks };
 };
 
 const Gauge = (customProps) => {
@@ -38,6 +40,7 @@ const Gauge = (customProps) => {
                     scale={props.scale}
                     rangeContainer={props.rangeContainer}
                     tick={props.scale.tick}
+                    minorTicks={scaleAndTicks.minorTicks}
                 />
                 <ValueIndicator
                     x={scaleAndTicks.scale(startValue)}
@@ -96,7 +99,16 @@ Gauge.defaultProps = {
         customTicks: [],
         tick: {
             color: 'white',
-            width: 2
+            width: 2,
+            length: 10
+        },
+        minorTicks: {
+            color: 'transparent',
+            width: 0,
+            length: 0
+        },
+        label: {
+            backgroundColor: 'transparent'
         }
     },
     size: {
@@ -108,7 +120,8 @@ Gauge.defaultProps = {
         axisOffset: 0,
         labelOffset: 30,
         backgroundColor: 'gray',
-        topPadding: 5
+        topPadding: 5,
+        width: 5
     },
     valueIndicator: {
         fill: '#C2C2C2',

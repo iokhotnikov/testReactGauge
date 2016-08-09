@@ -1,1 +1,1 @@
-export const getDAttribute = (x, y) => `M${x} ${y} L${x} ${y + 10}`;
+export const getDAttribute = (x, y, isCustom) => `M${x} ${y - (isCustom ? 5 : 0)} L${x} ${y + (isCustom ? 35 : 30)}`;
